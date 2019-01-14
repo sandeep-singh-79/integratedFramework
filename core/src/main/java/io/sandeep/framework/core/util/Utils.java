@@ -7,19 +7,17 @@ import org.openqa.selenium.WebDriver;
 import org.testng.ITestResult;
 
 import java.io.File;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
-import java.util.Date;
 
 import static org.apache.commons.io.FileUtils.copyFile;
 
 @Slf4j
 public class Utils {
     public static String getDate () {
-        DateFormat df = new SimpleDateFormat("dd-MMM-yyyy");
-        Date dateobj = new Date();
-        return (df.format(dateobj));
+        return (LocalDate.now().format(DateTimeFormatter.ofPattern("dd-MMM-yyyy")));
     }
 
     public static String getTimeStamp () {
@@ -27,9 +25,7 @@ public class Utils {
     }
 
     public static String getTimeStamp (String dateFormat) {
-        DateFormat df = new SimpleDateFormat(dateFormat);
-        Date dateobj = new Date();
-        return (df.format(dateobj));
+        return (LocalDateTime.now().format(DateTimeFormatter.ofPattern(dateFormat)));
     }
 
     public static File take_screenshot (WebDriver driver, ITestResult testResult) throws NullPointerException {
@@ -39,12 +35,11 @@ public class Utils {
     public static File take_screenshot (WebDriver driver, final String method_name) {
         if (driver == null) throw new NullPointerException();
 
-        String screenshot_dir_path = new File(String.format("%s/../Screenshots/%s", System.getProperty("user.dir"), getDate())).getPath();
+        String screenshot_dir_path = new File(String.format("%s/../Screenshots/%s", System.getProperty("user.dir"), getDate())).getAbsolutePath();
         File screenshotFile = null;
         try {
-            TakesScreenshot screenshot = (TakesScreenshot) driver;
             screenshotFile = create_screenshot_file(method_name, createDirectory(screenshot_dir_path));
-            copyFile(screenshot.getScreenshotAs(OutputType.FILE), screenshotFile);
+            copyFile(((TakesScreenshot) driver).getScreenshotAs(OutputType.FILE), screenshotFile);
         } catch (Exception ioe) {
             log.error(screenshot_dir_path);
             log.error("Encountered issue while creating screenshot for method/scenario {}", method_name);
@@ -56,7 +51,7 @@ public class Utils {
     }
 
     private static File create_screenshot_file (final String method_name, final File screenshot_dir) {
-        return new File(String.format("%s/%s_%s.png", screenshot_dir.getAbsolutePath(), method_name, Utils.getTimeStamp("dd-MM-yyyy_HH_mm_ss")));
+        return new File(String.format("%s/%s_%s.png", screenshot_dir.getAbsolutePath(), method_name, Utils.getTimeStamp()));
     }
 
     private static File createDirectory (String directoryPath) {
