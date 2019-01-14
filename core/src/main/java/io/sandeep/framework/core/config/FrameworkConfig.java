@@ -3,6 +3,7 @@ package io.sandeep.framework.core.config;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.Serializable;
 import java.util.Properties;
 
@@ -12,8 +13,13 @@ public class FrameworkConfig implements Cloneable, Serializable {
     private Properties frameworkProperties;
 
     private FrameworkConfig () {
-        frameworkProperties = new PropertyReader(new File(String.format("%s/src/main/resources/frameworkConfig.properties",
-                System.getProperty("user.dir")))).getPropertyFile();
+        try {
+            frameworkProperties = new PropertyFileReader(new File(String.format("%s/src/main/resources/frameworkConfig.properties",
+                    System.getProperty("user.dir")))).getPropertyFile();
+        } catch (FileNotFoundException e) {
+            log.error("Unable to locate the file as the path was not properly configured!!");
+            log.error(e.getStackTrace().toString());
+        }
     }
 
     public static FrameworkConfig getInstance () {
