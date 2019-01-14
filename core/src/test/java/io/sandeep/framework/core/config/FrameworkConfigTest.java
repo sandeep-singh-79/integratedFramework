@@ -16,10 +16,6 @@ public class FrameworkConfigTest {
         config = FrameworkConfig.getInstance();
     }
 
-    @AfterMethod
-    public void tearDown () {
-    }
-
     @Test
     public void testGetInstance () {
         assertTrue(config instanceof FrameworkConfig);

@@ -13,14 +13,6 @@ import static org.testng.Assert.assertTrue;
 
 @Slf4j
 public class PropertyFileReaderTest {
-    @BeforeMethod
-    public void setUp () {
-    }
-
-    @AfterMethod
-    public void tearDown () {
-    }
-
     @Test (expectedExceptions = NullPointerException.class)
     public void testGetNullPropertyFile () throws FileNotFoundException {
         new PropertyFileReader(null);
