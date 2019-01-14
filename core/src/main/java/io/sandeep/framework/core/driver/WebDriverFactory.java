@@ -7,6 +7,7 @@ import org.openqa.selenium.Platform;
 import org.openqa.selenium.WebDriver;
 
 import java.io.Serializable;
+import java.util.Arrays;
 import java.util.Properties;
 
 @Slf4j
@@ -53,7 +54,10 @@ public final class WebDriverFactory implements Serializable, Cloneable {
                         throw new NoSuchDriverException(String.format("UnSupported sandeep.io.framework.core.driver type requested: %s", driverType));
                 }
             } catch (NoSuchDriverException e) {
-                e.printStackTrace();
+                log.error("Encountered issue while instantiating driver instance {}", driverType);
+                log.error(Arrays.toString(e.getStackTrace()));
+                log.info("creating the driver for chrome by default");
+                tempDriver = getLocalDriverInstance();
             }
 
             return tempDriver;
