@@ -4,14 +4,16 @@ import lombok.extern.slf4j.Slf4j;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Properties;
 
 @Slf4j
-public class PropertyReader {
+public class PropertyFileReader {
     private Properties property;
 
-    public PropertyReader (File propertyFilePath) {
+    public PropertyFileReader (final File propertyFilePath) throws FileNotFoundException, NullPointerException {
+        if(propertyFilePath == null) throw new NullPointerException("Property file path is null! Can not initialize!");
         if (propertyFilePath.exists() && propertyFilePath.isFile()) {
             try {
                 property = new Properties();
@@ -21,6 +23,8 @@ public class PropertyReader {
                 System.out.println("Unable to locate the file at the provided location " + propertyFilePath.getPath());
                 e.printStackTrace();
             }
+        } else {
+            throw new FileNotFoundException("File Path supplied is either not valid or is not a file");
         }
     }
 
