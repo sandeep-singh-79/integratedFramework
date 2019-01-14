@@ -56,7 +56,7 @@ public abstract class BasePageObject {
      */
     protected abstract By getUniqueElement ();
 
-    protected void isLoaded () throws Error {
+    private void isLoaded () throws Error {
         //Define a list of WebElements that match the unique element locator for the page
         By uniqElement = getUniqueElement();
         List <WebElement> uniqueElement = driver.findElements(uniqElement);
