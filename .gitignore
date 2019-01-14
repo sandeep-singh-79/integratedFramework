@@ -156,6 +156,6 @@ fabric.properties
 
 /target/
 
-/[sS]creenshot*/
+*/[sS]creenshot*/
 */log/
 /framework.iml
