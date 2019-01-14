@@ -12,7 +12,7 @@
         <append>true</append>
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
             <!-- daily rollover -->
-            <fileNamePattern>${user.dir}/log/frameworkLog.%d{yyyy-MM-dd}.%i.log</fileNamePattern>
+            <fileNamePattern>${user.dir}/log/Core_Log.%d{yyyy-MM-dd}.%i.log</fileNamePattern>
             <timeBasedFileNamingAndTriggeringPolicy
                     class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
                 <!-- or whenever the file size reaches 1MB -->
