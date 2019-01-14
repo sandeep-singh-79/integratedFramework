@@ -1,0 +1,15 @@
+<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd" >
+
+<suite name="Suite1" verbose="1">
+    <listeners>
+        <!--<listener class-name="RetryListener" />-->
+        <listener class-name="io.sandeep.framework.testng.listeners.ScreenshotListener"/>
+        <listener class-name="com.aventstack.extentreports.testng.listener.ExtentITestListenerClassAdapter"/>
+    </listeners>
+
+    <test name="Functional - Login Test">
+        <classes>
+            <class name="io.sandeep.framework.testng.functional_tests.LoginTest"/>
+        </classes>
+    </test>
+</suite>
