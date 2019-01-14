@@ -7,7 +7,8 @@ import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-import static org.testng.Assert.*;
+import static org.testng.Assert.assertNull;
+import static org.testng.Assert.assertTrue;
 
 public class WebDriverFactoryTest {
     WebDriverFactory driverFactory;
@@ -52,6 +53,13 @@ public class WebDriverFactoryTest {
         WebDriver local = driverFactory.getDriver("local");
         local.quit(); local = null;
         assertNull(local);
+    }
+
+    @Test
+    public void test_local_driver_created_if_unsupported_driver_type_is_specified () {
+        WebDriver driver = driverFactory.getDriver("mobile");
+        assertTrue(driver instanceof ChromeDriver);
+        driver.quit();
     }
 
     @Test(expectedExceptions = CloneNotSupportedException.class)
