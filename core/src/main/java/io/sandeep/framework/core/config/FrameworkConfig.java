@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.Serializable;
+import java.util.Arrays;
 import java.util.Properties;
 
 @Slf4j
@@ -18,7 +19,7 @@ public class FrameworkConfig implements Cloneable, Serializable {
                     System.getProperty("user.dir")))).getPropertyFile();
         } catch (FileNotFoundException e) {
             log.error("Unable to locate the file as the path was not properly configured!!");
-            log.error(e.getStackTrace().toString());
+            log.error(Arrays.toString(e.getStackTrace()));
         }
     }
 

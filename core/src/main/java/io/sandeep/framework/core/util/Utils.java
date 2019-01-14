@@ -9,6 +9,7 @@ import org.testng.ITestResult;
 import java.io.File;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.Date;
 
 import static org.apache.commons.io.FileUtils.copyFile;
@@ -47,7 +48,7 @@ public class Utils {
         } catch (Exception ioe) {
             log.error("Encountered issue while creating screenshot for method/scenario {}", method_name);
             log.error("This was caused by {}", ioe.getCause());
-            log.error(String.valueOf(ioe.getStackTrace()));
+            log.error(Arrays.toString(ioe.getStackTrace()));
         }
 
         return screenshotFile;
