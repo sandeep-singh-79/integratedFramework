@@ -36,11 +36,13 @@ class LocalDriver extends Driver {
                 WebDriverManager.chromedriver().setup();
                 ChromeOptions options = new ChromeOptions();
                 options.addArguments("disable-infobars");
+                if(Boolean.valueOf(System.getProperty("headless", config.getProperty("headless")))) options.setHeadless(true);
                 //options.merge(sslError);
                 driver = new ChromeDriver(options);
             } else if (browser.contains("firefox") || browser.contains("ff")) {
                 WebDriverManager.firefoxdriver().setup();
                 FirefoxOptions options = new FirefoxOptions();
+                if(Boolean.valueOf(System.getProperty("headless", config.getProperty("headless")))) options.setHeadless(true);
                 //options.merge(sslError);
                 driver = new FirefoxDriver(options);
             } else if (System.getProperty("os.name").indexOf("win") == 0 && (browser.contains("iexplore") || browser.contains("internet"))) {
