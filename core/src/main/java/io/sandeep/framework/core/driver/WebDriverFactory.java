@@ -1,11 +1,14 @@
 package io.sandeep.framework.core.driver;
 
 import io.sandeep.framework.core.config.FrameworkConfig;
+import io.sandeep.framework.core.driver.remote.Server;
 import io.sandeep.framework.core.exception.NoSuchDriverException;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.openqa.selenium.Platform;
 import org.openqa.selenium.WebDriver;
 
+import java.io.IOException;
 import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Properties;
@@ -39,7 +42,7 @@ public final class WebDriverFactory implements Serializable, Cloneable {
 
     public WebDriver getDriver (String driverType) throws NullPointerException {
         driver = ThreadLocal.withInitial(() -> {
-            WebDriver tempDriver = null;
+            WebDriver tempDriver;
             try {
                 switch (driverType.toLowerCase()) {
                     case "local": {
@@ -51,7 +54,7 @@ public final class WebDriverFactory implements Serializable, Cloneable {
                         break;
                     }
                     default:
-                        throw new NoSuchDriverException(String.format("UnSupported sandeep.io.framework.core.driver type requested: %s", driverType));
+                        throw new NoSuchDriverException(String.format("UnSupported driver type requested: %s", driverType));
                 }
             } catch (NoSuchDriverException e) {
                 log.error("Encountered issue while instantiating driver instance {}", driverType);
@@ -63,7 +66,7 @@ public final class WebDriverFactory implements Serializable, Cloneable {
             return tempDriver;
         });
 
-        return (driver != null ? driver.get() : null);
+        return driver.get();
     }
 
     private WebDriver getLocalDriverInstance () {
@@ -77,16 +80,27 @@ public final class WebDriverFactory implements Serializable, Cloneable {
     }
 
     private WebDriver getRemoteDriverInstance () throws NoSuchDriverException {
-        String serverAddress = config.getProperty(System.getProperty("host"), "remote.ip");
-        int serverPort = Integer.parseInt(config.getProperty(System.getProperty("port"), "remote.port"));
-        String version = config.getProperty(System.getProperty("version"), "remote.version");
-        Platform platform = Platform.fromString(config.getProperty(System.getProperty("platform"), "remote.platform"));
+        String serverAddress = System.getProperty("host", config.getProperty("remote.ip"));
+        int serverPort = Integer.parseInt(System.getProperty("port", config.getProperty("remote.port")));
+        String version = System.getProperty("version", config.getProperty("remote.version"));
+        Platform platform = Platform.fromString(System.getProperty("platform", config.getProperty("remote.platform")));
 
         if (remoteDriverInstance == null) {
             synchronized (WebDriverFactory.class) {
-                if (remoteDriverInstance == null)
-                    remoteDriverInstance = new RemoteDriver(browser, serverAddress, serverPort, platform, version)
-                                                   .createDriver();
+                if (remoteDriverInstance == null) {
+                    if (StringUtils.isBlank(serverAddress)) {
+                        serverAddress = "localhost";
+                    }
+                    if (StringUtils.isBlank(Integer.toString(serverPort)) || serverPort < 1) {
+                        try {
+                            serverPort = new Server().start();
+                        } catch (IOException e) {
+                            log.error("Unable to start server automatically. Attempting again on port 4444");
+                            serverPort = new Server(4444).start();
+                        }
+                    }
+                    remoteDriverInstance = new RemoteDriver(browser, serverAddress, serverPort, platform, version).createDriver();
+                }
             }
         }
 

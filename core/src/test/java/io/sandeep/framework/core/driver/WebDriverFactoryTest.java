@@ -6,11 +6,13 @@ import org.openqa.selenium.firefox.FirefoxDriver;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.is;
 import static org.testng.Assert.assertNull;
 import static org.testng.Assert.assertTrue;
 
 public class WebDriverFactoryTest {
-    WebDriverFactory driverFactory;
+    private WebDriverFactory driverFactory;
 
     @BeforeMethod
     public void setUp () {
@@ -19,13 +21,20 @@ public class WebDriverFactoryTest {
 
     @Test
     public void testGetInstance () {
-        assertTrue(driverFactory instanceof WebDriverFactory);
+        assertTrue(driverFactory != null);
     }
 
     @Test
     public void testGetLocalChromeDriver () {
         WebDriver local = driverFactory.getDriver("local");
         assertTrue(local instanceof ChromeDriver);
+    }
+
+    @Test(enabled = false)
+    public void test_get_remote_driver_instance () {
+        WebDriver driver = driverFactory.getDriver("remote");
+        driver.get("http://www.google.com");
+        assertThat(driver.getTitle(), is("Google"));
     }
 
     // TODO: need to provide config params for RemoteDriver instance
@@ -42,18 +51,20 @@ public class WebDriverFactoryTest {
         assertTrue(local instanceof FirefoxDriver);
     }
 
-    @Test (enabled = false)
+    @Test
     public void testCloseDriver () {
         WebDriver local = driverFactory.getDriver("local");
-        local.close();
-        assertNull(local);
+        if (local != null) {
+            driverFactory.closeDriver();
+            local = null;
+        }
+        assertNull(local, "browser launched by WebDriver still open!!!");
     }
 
     @Test
     public void test_local_driver_created_if_unsupported_driver_type_is_specified () {
         WebDriver driver = driverFactory.getDriver("mobile");
         assertTrue(driver instanceof ChromeDriver);
-        driver.close();
     }
 
     @Test(expectedExceptions = CloneNotSupportedException.class)
