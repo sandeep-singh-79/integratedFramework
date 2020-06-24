@@ -23,7 +23,7 @@
         <dependency>
             <groupId>com.aventstack</groupId>
             <artifactId>extentreports-testng-adapter</artifactId>
-            <version>LATEST</version>
+            <version>1.0.7</version>
         </dependency>
         <dependency>
             <groupId>io.sandeep</groupId>
