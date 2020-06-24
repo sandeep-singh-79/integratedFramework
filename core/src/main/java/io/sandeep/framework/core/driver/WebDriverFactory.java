@@ -7,6 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.openqa.selenium.Platform;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebDriverException;
 
 import java.io.IOException;
 import java.io.Serializable;
@@ -18,10 +19,10 @@ public final class WebDriverFactory implements Serializable, Cloneable {
     private static WebDriverFactory instance;
     private WebDriver localDriverInstance, remoteDriverInstance;
     private ThreadLocal <WebDriver> driver;
-    private Properties config;
+    private final Properties config;
 
     // webdriver instantiation properties
-    private String browser;
+    private final String browser;
 
     private WebDriverFactory () {
         config = FrameworkConfig.getInstance().getConfigProperties();
@@ -79,7 +80,7 @@ public final class WebDriverFactory implements Serializable, Cloneable {
         return localDriverInstance;
     }
 
-    private WebDriver getRemoteDriverInstance () throws NoSuchDriverException {
+    private WebDriver getRemoteDriverInstance () throws NoSuchDriverException, WebDriverException {
         String serverAddress = System.getProperty("host", config.getProperty("remote.ip"));
         int serverPort = Integer.parseInt(System.getProperty("port", config.getProperty("remote.port")));
         String version = System.getProperty("version", config.getProperty("remote.version"));
@@ -87,6 +88,12 @@ public final class WebDriverFactory implements Serializable, Cloneable {
 
         if (remoteDriverInstance == null) {
             synchronized (WebDriverFactory.class) {
+                if (!(serverAddress.equalsIgnoreCase("localhost") || (serverAddress.equalsIgnoreCase("127.0.0.1")))
+                        && !RemoteDriver.is_remote_server_alive(serverAddress, serverPort)) {
+                    log.info("no response from server for url {} at port {}", serverAddress, serverPort);
+                    throw new WebDriverException("No response from server for url " + serverAddress);
+                }
+
                 if (remoteDriverInstance == null) {
                     if (StringUtils.isBlank(serverAddress)) {
                         serverAddress = "localhost";

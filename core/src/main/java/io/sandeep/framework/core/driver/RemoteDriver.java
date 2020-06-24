@@ -1,11 +1,11 @@
 package io.sandeep.framework.core.driver;
 
-import io.github.bonigarcia.wdm.DriverManagerType;
-import io.github.bonigarcia.wdm.WebDriverManager;
 import io.sandeep.framework.core.exception.NoSuchDriverException;
 import lombok.extern.slf4j.Slf4j;
+import org.eclipse.jetty.client.HttpClient;
 import org.openqa.selenium.Platform;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebDriverException;
 import org.openqa.selenium.ie.InternetExplorerDriver;
 import org.openqa.selenium.remote.DesiredCapabilities;
 import org.openqa.selenium.remote.RemoteWebDriver;
@@ -51,7 +51,7 @@ class RemoteDriver extends Driver {
             capabilities.setAcceptInsecureCerts(true);
             capabilities.setJavascriptEnabled(true);
             try {
-                WebDriverManager.getInstance(DriverManagerType.SELENIUM_SERVER_STANDALONE).setup();
+                //WebDriverManager.getInstance(DriverManagerType.SELENIUM_SERVER_STANDALONE).setup();
                 driver = (new RemoteWebDriver(
                         new URL(String.format("http://%s:%d/wd/hub", serverAddress, serverPort)), capabilities));
             } catch (MalformedURLException e) {
@@ -62,5 +62,19 @@ class RemoteDriver extends Driver {
         }
 
         return driver;
+    }
+
+    static boolean is_remote_server_alive (String server, int port) {
+        try {
+            HttpClient client = new HttpClient();
+            client.start();
+
+            int status_code = client.GET(String.format("http://%s/%d/wd/hub/status", server, port)).getStatus();
+
+            return ((status_code == 200) || (status_code == 201));
+        } catch (Exception e) {
+            log.error("server at {}:{} is not responding", server, port);
+            throw new WebDriverException("No response from server for url");
+        }
     }
 }
