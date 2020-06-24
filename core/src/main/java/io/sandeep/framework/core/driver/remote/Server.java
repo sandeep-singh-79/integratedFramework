@@ -1,31 +1,36 @@
 package io.sandeep.framework.core.driver.remote;
 
 import io.github.bonigarcia.wdm.WebDriverManager;
+import io.sandeep.framework.core.exception.NoSuchServerRoleException;
 import lombok.extern.slf4j.Slf4j;
+import org.openqa.grid.selenium.GridLauncherV3;
 
 import java.io.IOException;
 import java.net.ServerSocket;
 
+import static io.github.bonigarcia.wdm.config.DriverManagerType.SELENIUM_SERVER_STANDALONE;
+import static java.lang.String.format;
+
 @Slf4j
 public class Server {
     private final int server_port;
+    private final String server_address;
+    private final String role;
 
-    public Server () throws IOException {
-        this(get_free_port());
-    }
-
-    public Server (int port) {
+    public Server (String server, int port, String role) {
         server_port = port;
+        server_address = server;
+        if (role.equals("hub") || role.equals("node")) this.role = role;
+        else
+            throw new NoSuchServerRoleException(format("Selenium stand alone server cannot be initialized with the supplied role of %s", role));
     }
 
     public int start () {
-        //WebDriverManager.getInstance(DriverManagerType.SELENIUM_SERVER_STANDALONE).setup();
-        /*
-         *TODO: use GridLauncherV3 to launch the server instead of using WebDriverManager main
-         * as this launches the WDM server and not Remote Server
-         */
-        WebDriverManager.main(new String[]{"server", Integer.toString(server_port)});
-
+        WebDriverManager.getInstance(SELENIUM_SERVER_STANDALONE).setup();
+        String[] hub = {"-port", Integer.toString(server_port),
+                "-host", server_address,
+                "-role", role};
+        GridLauncherV3.main(hub);
         return server_port;
     }
 
