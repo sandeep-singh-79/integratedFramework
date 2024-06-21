@@ -1,7 +1,5 @@
 package io.sandeep.framework.core.driver;
 
-import io.github.bonigarcia.wdm.WebDriverManager;
-import lombok.extern.slf4j.Slf4j;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
@@ -9,6 +7,9 @@ import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.firefox.FirefoxOptions;
 import org.openqa.selenium.ie.InternetExplorerDriver;
 import org.openqa.selenium.ie.InternetExplorerOptions;
+
+import io.github.bonigarcia.wdm.WebDriverManager;
+import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 class LocalDriver extends Driver {
@@ -36,13 +37,13 @@ class LocalDriver extends Driver {
                 WebDriverManager.chromedriver().setup();
                 ChromeOptions options = new ChromeOptions();
                 options.addArguments("disable-infobars");
-                if(Boolean.valueOf(System.getProperty("headless", config.getProperty("headless")))) options.setHeadless(true);
+                if(Boolean.valueOf(System.getProperty("headless", config.getProperty("headless")))) options.addArguments("--headless=new");
                 //options.merge(sslError);
                 driver = new ChromeDriver(options);
             } else if (browser.contains("firefox") || browser.contains("ff")) {
                 WebDriverManager.firefoxdriver().setup();
                 FirefoxOptions options = new FirefoxOptions();
-                if(Boolean.valueOf(System.getProperty("headless", config.getProperty("headless")))) options.setHeadless(true);
+                if(Boolean.valueOf(System.getProperty("headless", config.getProperty("headless")))) options.addArguments("--headless");
                 //options.merge(sslError);
                 driver = new FirefoxDriver(options);
             } else if (System.getProperty("os.name").indexOf("win") == 0 && (browser.contains("iexplore") || browser.contains("internet"))) {
