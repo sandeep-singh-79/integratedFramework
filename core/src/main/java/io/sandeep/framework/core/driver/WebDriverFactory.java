@@ -112,7 +112,7 @@ public final class WebDriverFactory implements Serializable, Cloneable {
                         log.info("Launching selenium server on the localhost at port {}", serverPort);
 
                         try {
-                            remote_server = new Server(serverAddress, serverPort, "hub");
+                            remote_server = new Server(serverAddress, serverPort, Server.Role.HUB);
                             serverPort = remote_server.start();
                         } catch (NoSuchServerRoleException e) {
                             log.error("Unable to initialize the remote selenium server on ");

@@ -15,12 +15,12 @@ import static java.lang.String.format;
 public class Server {
     private final int server_port;
     private final String server_address;
-    private final String role;
+    private final Role role;
 
-    public Server (String server, int port, String role) {
+    public Server (String server, int port, Role role) {
         server_port = port;
         server_address = server;
-        if (role.equals("hub") || role.equals("node")) this.role = role;
+        if (role.equals(Role.HUB) || role.equals(Role.NODE)) this.role = role;
         else
             throw new NoSuchServerRoleException(format("Selenium stand alone server cannot be initialized with the supplied role of %s", role));
     }
@@ -29,7 +29,7 @@ public class Server {
         WebDriverManager.getInstance(SELENIUM_SERVER_STANDALONE).setup();
         String[] hub = {"-port", Integer.toString(server_port),
                 "-host", server_address,
-                "-role", role};
+                "-role", role.toString()};
         GridLauncherV3.main(hub);
         return server_port;
     }
@@ -37,6 +37,14 @@ public class Server {
     public static int get_free_port () throws IOException {
         try (ServerSocket socket = new ServerSocket(0)) {
             return socket.getLocalPort();
+        }
+    }
+
+    public static enum Role {
+        HUB, NODE;
+
+        public String toString () {
+            return this.name().toLowerCase();
         }
     }
 }
