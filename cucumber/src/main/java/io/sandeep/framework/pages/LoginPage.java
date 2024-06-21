@@ -1,26 +1,27 @@
 package io.sandeep.framework.pages;
 
-import io.sandeep.framework.core.config.FrameworkConfig;
-import io.sandeep.framework.core.pages.base.BasePageObject;
-import lombok.extern.slf4j.Slf4j;
+import static org.openqa.selenium.support.PageFactory.initElements;
+
+import java.util.Properties;
+
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 
-import java.util.Properties;
-
-import static org.openqa.selenium.support.PageFactory.initElements;
+import io.sandeep.framework.core.config.FrameworkConfig;
+import io.sandeep.framework.core.pages.base.BasePageObject;
+import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 public class LoginPage extends BasePageObject {
-    @FindBy(id = "username")
+    @FindBy(name = "username")
     private WebElement usernameTxt;
-    @FindBy(name = "j_password")
+    @FindBy(name = "password")
     private WebElement passwordTxt;
-    @FindBy(css = "input.secondary-btn.btn")
+    @FindBy(css = "#loginPanel > form > div:nth-child(5) > input")
     private WebElement btnLogin;
-    @FindBy(className = "forgot-link")
+    @FindBy(css = "#loginPanel > p:nth-child(2) > a")
     private WebElement lnkForgotPassword;
 
 
@@ -35,7 +36,7 @@ public class LoginPage extends BasePageObject {
 
     @Override
     protected By getUniqueElement () {
-        return By.className("forgot-link");
+        return By.cssSelector("#loginPanel > p:nth-child(2) > a");
     }
 
     public LoginErrorPage attemptSignIn (String username, String password) {

@@ -1,5 +1,10 @@
 package io.sandeep.framework.cucumber.stepdefinitions;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.core.Is.is;
+
+import java.util.List;
+
 import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
 import io.cucumber.datatable.DataTable;
@@ -9,11 +14,6 @@ import io.sandeep.framework.cucumber.stepdefinitions.base.BaseStepDefinition;
 import io.sandeep.framework.pages.ForgotPasswordPage;
 import io.sandeep.framework.pages.LoginErrorPage;
 import io.sandeep.framework.pages.LoginPage;
-
-import java.util.List;
-
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.core.Is.is;
 
 public class LoginStepdefs extends BaseStepDefinition {
     private LoginPage loginPage;
@@ -34,7 +34,7 @@ public class LoginStepdefs extends BaseStepDefinition {
 
     @Then("The user should see the error message")
     public void the_user_should_see_the_error_message () {
-        assertThat(login_error_page.getErrorText(), is("Sorry, your account is disabled. Please contact LEVERTON Support for assistance."));
+        assertThat(login_error_page.getErrorText(), is("An internal error has occurred and has been logged."));
     }
 
     @When("The user clicks on {string}")
@@ -44,6 +44,6 @@ public class LoginStepdefs extends BaseStepDefinition {
 
     @Then("The user should land on Forgot Password page")
     public void theUserShouldLandOnForgotPasswordPage () {
-        assertThat(forgot_password_page.getPageTitle(), is("Forgot password"));
+        assertThat(forgot_password_page.getPageTitle(), is("ParaBank | Customer Lookup"));
     }
 }
